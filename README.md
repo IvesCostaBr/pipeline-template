@@ -1,6 +1,6 @@
 # Nome do Projeto
 
-phantom-corrector-tool
+Pipeline Template Python
 
 ## Sobre
 
@@ -8,9 +8,9 @@ Trata-se um projeto voltado a correção e validação de condigo server side
 
 ## Tecnologias Utilizadas
 
-- Tecnologia 1
-- Tecnologia 2
-- Tecnologia 3
+- python
+- Fastapi
+- gRpc
 
 ## Instalação
 
