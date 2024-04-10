@@ -1,6 +1,6 @@
 from pymongo.mongo_client import MongoClient
 from bson import ObjectId
-from src.infra.cache import cache_manager
+# from src.infra.cache import cache_manager
 from datetime import datetime
 import time
 
@@ -26,7 +26,8 @@ class MongoDatabase:
             raise Exception(f"error connect database {str(ex)}")
 
     def get(self, entity: str, id: str, use_cache: bool = True):
-        value_cached = cache_manager.get(id) if use_cache else False
+        # value_cached = cache_manager.get(id) if use_cache else False
+        value_cached = None
         if not value_cached:
             try:
                 object_id = ObjectId(id)
@@ -36,7 +37,7 @@ class MongoDatabase:
             if doc is not None:
                 doc["id"] = str(doc["_id"])
                 doc.pop("_id")
-                cache_manager.save(id, doc, 1200)
+                # cache_manager.save(id, doc, 1200)
                 return doc
             else:
                 return None
@@ -53,22 +54,28 @@ class MongoDatabase:
             if "__" not in key.lower():
                 filter_formated.append({key: value})
             elif "__lt" in key.lower():
-                filter_formated.append({key.replace("__lt", ""): {"$lt": value}})
+                filter_formated.append(
+                    {key.replace("__lt", ""): {"$lt": value}})
             elif "__lte" in key.lower():
-                filter_formated.append({key.replace("__lte", ""): {"$lte": value}})
+                filter_formated.append(
+                    {key.replace("__lte", ""): {"$lte": value}})
             elif "__range" in key.lower():
                 start, end = value
                 filter_formated.append(
                     {key.replace("__range", ""): {"$gte": start, "$lte": end}}
                 )
             elif "__gt" in key.lower():
-                filter_formated.append({key.replace("__gt", ""): {"$gt": value}})
+                filter_formated.append(
+                    {key.replace("__gt", ""): {"$gt": value}})
             elif "__gte" in key.lower():
-                filter_formated.append({key.replace("__gte", ""): {"$gte": value}})
+                filter_formated.append(
+                    {key.replace("__gte", ""): {"$gte": value}})
             elif "__in" in key.lower():
-                filter_formated.append({key.replace("__in", ""): {"$in": value}})
+                filter_formated.append(
+                    {key.replace("__in", ""): {"$in": value}})
             elif "__in" in key.lower():
-                filter_formated.append({key.replace("__nt", ""): {"$not": value}})
+                filter_formated.append(
+                    {key.replace("__nt", ""): {"$not": value}})
         return filter_formated
 
     def create(self, entity: str, data: dict, id: str = None):
@@ -88,7 +95,8 @@ class MongoDatabase:
         data["updated_at"] = time.mktime(datetime.now().timetuple())
         update_operation = {"$set": data}
         try:
-            self.db[entity].update_one({"_id": id}, update_operation, upsert=False)
+            self.db[entity].update_one(
+                {"_id": id}, update_operation, upsert=False)
             return True
         except:
             return False

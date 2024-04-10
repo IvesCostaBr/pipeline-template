@@ -1,9 +1,12 @@
 from fastapi import FastAPI, Request, responses
 from starlette import status
+from src.infra.database.db_config import create_db
 from src.api.routes import utils
 import os
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+create_db()
 
 api = FastAPI(title="Pipeline Project")
 

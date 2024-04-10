@@ -1,12 +1,7 @@
 from src.infra.cache.icache import ICacheCliente
-from src.utils.logger import handler
+from src.utils import logger
 import redis
 import os
-import logging
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
 
 
 class RedisClient(ICacheCliente):

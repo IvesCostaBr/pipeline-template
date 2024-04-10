@@ -6,6 +6,6 @@ def return_pipe(data):
         {
             "name": "response",
             "provider": "response",
-            "module": "example_response"
+            "module": "healthcheck_response"
         }
     ]

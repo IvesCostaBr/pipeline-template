@@ -4,3 +4,4 @@
 repositories
 keys
 *.pyc
+*.db
