@@ -1,10 +1,23 @@
-from fastapi import FastAPI, Request, responses
-from starlette import status
-from src.infra.database.db_config import create_db
 from src.api.routes import utils
+from src.infra.database.db_config import create_db
+from starlette import status
+from fastapi import FastAPI, Request, responses
 import os
+from dotenv import load_dotenv
+
+
+if os.environ.get("DEPLOY") and bool(int(os.environ.get("DEPLOY"))):
+    from src.utils.secrets import start_secret_env
+    if os.path.exists("./src/configs/credential-gcp.json"):
+        start_secret_env()
+        load_dotenv()
+        os.remove(".env")
+else:
+    load_dotenv()
+
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 create_db()
 

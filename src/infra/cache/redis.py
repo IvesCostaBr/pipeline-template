@@ -8,7 +8,7 @@ class RedisClient(ICacheCliente):
     def __init__(self):
         try:
             self.redis_client = redis.StrictRedis.from_url(
-                os.environ.get("REDIS_URL"))
+                os.environ.get("CACHE_URI"))
         except Exception as ex:
             logger.critical(f"Error connecting to Redis - {ex}")
             None

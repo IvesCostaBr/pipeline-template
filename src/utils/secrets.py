@@ -1,18 +1,19 @@
 from google.cloud import secretmanager
 from google.oauth2 import service_account
+from src.utils import logger
 import os
 
 
-def start_secret_env():
+def start_secret_env_remote_gcp():
     """Start load secret env."""
     try:
         secrets = access_secret_version(
-            os.environ.get("PROJECT_ID"), os.environ.get("PROJECT_ENVIRON")
+            os.environ.get("PROJECT_ID"), os.environ.get("ENVIRONMENT")
         )
         open(".env", "w").write(secrets)
-        print("[CONFIG] ENV loaded...")
+        logger.info("[CONFIG] ENV loaded...")
     except Exception as ex:
-        print(ex)
+        logger.error(ex)
         raise Exception("Error to load env config.")
 
 
@@ -38,5 +39,5 @@ def get_all_crts_and_keys():
     for file in files_required:
         secret = access_secret_version("uoleti-staging", file)
         files[file] = secret
-    print("[CONFIG] all files loaded...")
+    logger.info("[CONFIG] all files loaded...")
     return files

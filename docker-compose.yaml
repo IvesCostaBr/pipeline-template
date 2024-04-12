@@ -17,6 +17,8 @@ services:
       - ./.env
     networks:
       - internal-net
+    volumes:
+      - .:/code
 
   # mongodb:
   #   image: mongo:5.0.22
@@ -29,19 +31,77 @@ services:
   #   networks:
   #     - internal-net
 
-  # cache:
-  #   image: redis:6.2-alpine
-  #   restart: always
-  #   container_name: redis
-  #   ports:
-  #     - "6379:6379"
-  #   command: "redis-server --save 20 1 --requirepass cpktnwt00123 --loglevel warning"
-  #   volumes:
-  #     - cache:/data
-  #   networks:
-  #     - internal-net
+  celery-beat:
+    image: api:latest
+    container_name: celery_beat
+    restart: always
+    command: ["celery", "--app", "src.utils.celery", "beat", "-l", "debug"]
+    depends_on: [cache]
+    environment:
+      - TZ=America/Sao_Paulo
+    env_file:
+      - ./.env
+    networks:
+      - internal-net
+
+  celery-worker:
+    image: api:latest
+    container_name: celery_worker
+    restart: always
+    command:
+      [
+        "celery",
+        "--app",
+        "src.utils.celery",
+        "worker",
+        "--concurrency=4",
+        "-l",
+        "info",
+      ]
+    depends_on: [cache]
+    env_file:
+      - ./.env
+    environment:
+      - TZ=America/Sao_Paulo
+    networks:
+      - internal-net
+
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: "redis-server --save 20 1 --requirepass redispass --loglevel warning"
+    volumes:
+      - cache:/data
+    networks:
+      - internal-net
+
+  db:
+    image: postgres
+    restart: always
+    container_name: postgres
+    environment:
+      POSTGRES_DB: core
+      POSTGRES_USER: admin
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: postgresspass
+    volumes:
+      - pgdata:/var/lib/postgresql/dat
+    networks:
+      - internal-net
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - internal-net
 
 volumes:
+  pgdata:
   cache:
     driver: local
   mongodb:
