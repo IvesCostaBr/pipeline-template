@@ -6,6 +6,13 @@ def return_pipe(data):
             "module": "filter" 
         },
         {
+            "name": "job",
+            "provider": "example",
+            "module": "job",
+            "condition": data.get('limit'),
+            "async": True 
+        },
+        {
             "name": "response",
             "provider": "response",
             "module": "example_filter"

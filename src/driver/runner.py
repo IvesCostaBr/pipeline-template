@@ -46,20 +46,14 @@ def pipeline_runner(pipeline: str, data=None):
             counter += 1
             start_time = time.time()
             validate_step_valid(each)
-            if each.get("condition"):
-                condition_value = pipeline_data.get(
-                    each.get("condition", {}).get("step", {})).get("status", {}) == each.get("condition", {}).get("value")
-                if not condition_value:
-                    show_log(
-                        "Ignoring Step {} -> {}".format(counter, each.get("name")))
-                    continue
-            elif "execute" in each.keys() and not each.get("execute"):
+            if "condition" in each.keys() and not each.get('condition'):
                 show_log(
-                    "Ignoring Step {} -> {}".format(counter, each.get("name")))
+                    "Ignoring Step {} -> {} | condition not valid".format(counter, each.get("name")))
                 continue
-            show_log("Executing Step {} -> {}".format(counter, each.get("name")))
-            result = executor(pipeline_data, each.get("provider"), each.get(
-                "module") if each.get("module") else None, each.get("async"))
+            else:
+                show_log("Executing Step {} -> {}".format(counter, each.get("name")))
+                result = executor(pipeline_data, each.get("provider"), each.get(
+                    "module") if each.get("module") else None, each.get("async"))
             end_time = time.time()
             pipeline_data[each.get("name")] = result
             if not result.get("status"):
