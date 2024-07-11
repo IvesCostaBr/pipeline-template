@@ -17,3 +17,9 @@ fi
 if [ "$1" == 'tests' ];then
     pytest --cov=. ./src/tests/
 fi
+
+if [ "$1" == 'config' ];then
+    python3 -m venv venv
+    source ./venv/bin/activate
+    pip install -r requirements.txt
+fi
