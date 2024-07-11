@@ -9,7 +9,7 @@ class MongoDatabase:
     def __init__(self, connection_string: str, port: int, db_name: str):
         """Initialize class with connection string and database name."""
         self.host = connection_string
-        self.port = int(port)
+        self.port = port
         self.db_name = db_name
         self.db = None
         self.client = None
@@ -19,11 +19,11 @@ class MongoDatabase:
     def create_connection(self):
         """Create connection with MongoDB."""
         try:
-            self.client = MongoClient(self.host, self.port)
+            self.client = MongoClient(self.host, int(self.port))
             print("MongoDB connected successfully!!")
             self.db = self.client[self.db_name]
         except Exception as ex:
-            raise Exception(f"error connect database {str(ex)}")
+            raise Exception(f"error connect database - {str(ex)}")
 
     def get(self, entity: str, id: str, use_cache: bool = True):
         # value_cached = cache_manager.get(id) if use_cache else False
@@ -101,24 +101,27 @@ class MongoDatabase:
         except:
             return False
 
-    def filter_query(self, entity: str, query: dict, exclude_fields: list = []):
+    def filter_query(self, entity: str, query: dict, skip: 0, limit: 1000, exclude_fields: list = []):
         response_list = []
         formatted_query = self.__format_filter(query)
-        result = self.db[entity].find({"$and": formatted_query})
-        if not result:
-            return []
-        for each in result:
+
+        mongo_query = {"$and": formatted_query} if formatted_query else None
+
+        result_query = self.db[entity].find(mongo_query).skip(skip).limit(limit)
+        
+        for each in result_query:
             each["id"] = str(each["_id"])
             each.pop("_id")
+
             if exclude_fields:
                 each = {
                     key: value
                     for key, value in each.items()
                     if key not in exclude_fields
                 }
+            
             response_list.append(each)
         return response_list
-
     def exists(self, entity: str, query: dict):
         result = self.db[entity].find(query)
         return list(result)

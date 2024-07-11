@@ -17,3 +17,6 @@ psycopg2-binary
 debugpy==1.8.0
 grpcio==1.59.0
 grpcio-tools==1.59.0
+fuzzywuzzy==0.18.0
+sentry_sdk==2.7.1
+watchdog==4.0.1

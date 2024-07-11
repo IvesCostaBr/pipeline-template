@@ -3,6 +3,7 @@
 echo "Stating Application!"
 
 if [ "$1" == 'debug' ];then
+    cp .env.local .env
     sudo docker-compose build --no-cache && sudo docker-compose up
     exit 1
 fi

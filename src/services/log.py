@@ -11,6 +11,3 @@ class LogService:
 
     def get_all(self):
         pass
-
-    def filter(self):
-        pass

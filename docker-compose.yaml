@@ -33,9 +33,6 @@ services:
       - "27017:27017"
     volumes:
       - mongodb:/data/db 
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
     networks:
       - internal-net
 
@@ -56,17 +53,10 @@ services:
     image: api:latest
     container_name: celery_worker
     restart: always
-    command:
-      [
-        "celery",
-        "--app",
-        "src.utils.celery",
-        "worker",
-        "--concurrency=4",
-        "-l",
-        "info",
-      ]
     depends_on: [cache]
+    command: watchmedo auto-restart -d src/tasks -p '*.py' -- celery --app src.utils.celery worker --concurrency=2 -l info
+    volumes:
+      - .:/code
     env_file:
       - ./.env
     environment:
@@ -97,14 +87,6 @@ services:
       POSTGRES_PASSWORD: postgresspass
     volumes:
       - pgdata:/var/lib/postgresql/dat
-    networks:
-      - internal-net
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
     networks:
       - internal-net
 

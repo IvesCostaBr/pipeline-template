@@ -4,6 +4,13 @@ from starlette import status
 from fastapi import FastAPI, Request, responses
 import os
 from dotenv import load_dotenv
+import sentry_sdk
+
+# sentry_sdk.init(
+#     dsn=os.environ.get('SENTRY_DSN'),
+#     traces_sample_rate=0.1,
+#     profiles_sample_rate=0.1,
+# )
 
 
 if os.environ.get("DEPLOY") and bool(int(os.environ.get("DEPLOY"))):

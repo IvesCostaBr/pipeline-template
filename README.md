@@ -15,8 +15,11 @@ Dummy para a criação de serviços
 ## Variaveis de Ambiente
 
 ```bash
-# .env
+# --- env
 ENVIRONMENT='LOCAL'
+
+# --- others
+SENTRY_DSN=''
 
 # --- postgres
 RELATIONAL_DB_URI='postgresql://admin:postgresspass@db/core'
@@ -29,7 +32,7 @@ REDIS_URL='redis://default:redispass@cache:6379/0'
 BROKER_URI='redis://default:redispass@cache:6379/2'
 
 # --- mongo
-MONGO_HOST='mongodb://root:root@mongodb'
+MONGO_HOST='mongodb://root:root@mongodb/?authSource=admin'
 MONGO_PORT=27017
 MONGO_DB_NAME='example-db'
 ```
