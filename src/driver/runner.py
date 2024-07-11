@@ -14,11 +14,11 @@ def validate_step_valid(step: dict):
             raise Exception("step invalid")
 
 
-def save_log(pipeline_name: str, pipeline_data: dict, time_exe: float):
+def save_log(pipeline_name: str, pipeline_data: dict, time_exe: float = None):
     try:
         saved_data = {"payload": pipeline_data.get(
             "payload"), "errors": pipeline_data.get("errors")}
-        log_repo.create({"content": saved_data, "call_method": time_exe})
+        log_repo.create({"content": saved_data, "call_method": pipeline_name})
     except Exception as ex:
         show_log(str(ex))
 
