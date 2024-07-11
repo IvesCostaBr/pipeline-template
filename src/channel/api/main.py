@@ -2,9 +2,11 @@ from src.channel.api.routes import utils
 from src.infra.database.db_config import create_db
 from starlette import status
 from fastapi import FastAPI, Request, responses
+from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
-import sentry_sdk
+# import sentry_sdk
+
 
 # sentry_sdk.init(
 #     dsn=os.environ.get('SENTRY_DSN'),
@@ -29,6 +31,19 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 create_db()
 
 api = FastAPI(title="Pipeline Project")
+
+origins = [
+    "*",
+]
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 api.include_router(utils.router, prefix="/utils")
 
