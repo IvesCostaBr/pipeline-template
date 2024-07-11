@@ -3,6 +3,9 @@ from src.infra.database.db_config import create_db
 from starlette import status
 from fastapi import FastAPI, Request, responses
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException, Request
+from slowapi.middleware import SlowAPIMiddleware
+from src.configs.rate_limit import limiter
 import os
 from dotenv import load_dotenv
 # import sentry_sdk
@@ -36,6 +39,10 @@ origins = [
     "*",
 ]
 
+
+api.add_middleware(SlowAPIMiddleware)
+api.state.limiter = limiter
+
 api.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -43,6 +50,15 @@ api.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# @api.middleware("http")
+# async def block_keep_alive_header(request, call_next):
+#     if "connection" in request.headers and request.headers["connection"].lower() == "keep-alive":
+#         raise HTTPException(status_code=403, detail="Keep-Alive header is not allowed.")
+    
+#     response = await call_next(request)
+#     return response
 
 
 api.include_router(utils.router, prefix="/utils")
