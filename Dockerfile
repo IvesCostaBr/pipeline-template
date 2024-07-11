@@ -33,5 +33,6 @@ RUN chmod +w $APP_HOME
 COPY . .
 
 EXPOSE 8000
+EXPOSE 5678
 
-CMD ["python", "-m", "debugpy", "--listen","0.0.0.0:5678", "-m", "uvicorn", "main:api", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["python", "-m", "debugpy", "--wait-for-client", "--listen","0.0.0.0:5678", "-m", "uvicorn", "src.channel.api.main:api", "--host", "0.0.0.0", "--port", "8000", "--reload"]

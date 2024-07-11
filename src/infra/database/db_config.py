@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 SQLALCHEMY_DATABASE_URL = os.environ.get('RELATIONAL_DB_URI')
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
@@ -14,7 +13,10 @@ Base = declarative_base()
 
 
 def create_db():
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as ex:
+        raise Exception("Error in configure database - {}".format(str(ex)))
 
 
 def init_session():

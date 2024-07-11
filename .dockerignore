@@ -1,0 +1,8 @@
+/venv
+*.log
+repositories
+keys
+*.pyc
+*.db
+.coverage
+*.pyteste

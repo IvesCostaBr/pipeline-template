@@ -1,4 +1,4 @@
-from src.api.routes import utils
+from src.channel.api.routes import utils
 from src.infra.database.db_config import create_db
 from starlette import status
 from fastapi import FastAPI, Request, responses

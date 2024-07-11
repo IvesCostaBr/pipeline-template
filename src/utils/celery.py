@@ -4,9 +4,9 @@ import os
 
 
 app = Celery(
-    "uoleti_api",
-    broker=os.environ.get("CACHE_URI"),
-    backend=os.environ.get("CACHE_URI"),
+    "exampĺe_core",
+    broker=os.environ.get("BROKER_URI"),
+    backend=os.environ.get("BROKER_URI"),
     include=[
         "src.tasks.logging",
     ],

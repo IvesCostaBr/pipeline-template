@@ -1,7 +1,21 @@
 from abc import ABC
+from contextlib import contextmanager
+from src.infra.database.db_config import SessionLocal
 
 
 class RepositoryAbs(ABC):
+    @contextmanager
+    def get_session(self):
+        session = SessionLocal()
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
     @classmethod
     def get(self, id: int):
         raise NotImplemented()

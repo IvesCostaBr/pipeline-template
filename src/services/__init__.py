@@ -4,7 +4,7 @@ import inspect
 
 modules_loaded = []
 
-module_dir = "src/repository"
+module_dir = "src/services"
 module_files = [
     f[:-3]
     for f in os.listdir(module_dir)
@@ -16,10 +16,10 @@ for module_name in module_files:
     classes = inspect.getmembers(module, inspect.isclass)
 
     for class_name, class_obj in classes:
-        if class_name.endswith("Repository"):
+        if class_name.endswith("Service"):
             instance = class_obj()
-            globals()[f"{instance.entity[:-1]}_repo"] = instance
-            modules_loaded.append(f"{instance.entity[:-1]}_repo")
+            globals()[f"{instance.entity}_service"] = instance
+            modules_loaded.append(f"{instance.entity[:-1]}_service")
 
 
-print("Repo's Loaded", modules_loaded)
+print("Services Loaded", modules_loaded)

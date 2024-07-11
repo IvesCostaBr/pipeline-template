@@ -5,3 +5,5 @@ repositories
 keys
 *.pyc
 *.db
+.coverage
+*.pyteste

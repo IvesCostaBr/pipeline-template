@@ -3,8 +3,7 @@ from src.repository import log_repo
 import time
 from copy import deepcopy
 from src.utils import show_log
-from src.infra.database.db_config import init_session
-from src.models import log as log_schema
+from threading import Thread
 
 
 def validate_step_valid(step: dict):
@@ -13,6 +12,15 @@ def validate_step_valid(step: dict):
     for each in required_keys:
         if not each in step.keys():
             raise Exception("step invalid")
+
+
+def save_log(pipeline_name: str, pipeline_data: dict, time_exe: float):
+    try:
+        saved_data = {"payload": pipeline_data.get(
+            "payload"), "errors": pipeline_data.get("errors")}
+        log_repo.create({"content": saved_data, "call_method": time_exe})
+    except Exception as ex:
+        show_log(str(ex))
 
 
 def pipeline_runner(pipeline: str, data=None):
@@ -30,8 +38,8 @@ def pipeline_runner(pipeline: str, data=None):
     pipeline_steps = function(data)
     show_log("Executing Pipeline -> {}".format(pipeline))
     pipeline_time = time.time()
-    session = init_session()
-    pipeline_data = {"payload": deepcopy(data), "errors": []}
+    pipeline_data = {"payload": deepcopy(
+        data), "errors": []}
     counter = 0
     for each in pipeline_steps:
         try:
@@ -39,10 +47,16 @@ def pipeline_runner(pipeline: str, data=None):
             start_time = time.time()
             validate_step_valid(each)
             if each.get("condition"):
-                if not pipeline_data.get(each.get("condition", {}).get("step", {})).get("status", {}) == each.get("condition", {}).get("value"):
+                condition_value = pipeline_data.get(
+                    each.get("condition", {}).get("step", {})).get("status", {}) == each.get("condition", {}).get("value")
+                if not condition_value:
                     show_log(
                         "Ignoring Step {} -> {}".format(counter, each.get("name")))
                     continue
+            elif "execute" in each.keys() and not each.get("execute"):
+                show_log(
+                    "Ignoring Step {} -> {}".format(counter, each.get("name")))
+                continue
             show_log("Executing Step {} -> {}".format(counter, each.get("name")))
             result = executor(pipeline_data, each.get("provider"), each.get(
                 "module") if each.get("module") else None, each.get("async"))
@@ -65,11 +79,6 @@ def pipeline_runner(pipeline: str, data=None):
     show_log(
         "Pipeline Finished -> {} - time exec -> {} sec. ".format(pipeline, elapsed_time))
 
-    try:
-        result = log_repo.create(session, log_schema.LogModel(
-            call_method=pipeline,
-            content=pipeline_data
-        ))
-    except Exception as ex:
-        print(ex)
+    Thread(target=save_log, args=(pipeline, pipeline_data, elapsed_time)).start()
+
     return pipeline_data.get("response", {}).get("data", {"error": f"error ocurred in execute pipeline {pipeline}"})

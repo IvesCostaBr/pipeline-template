@@ -4,7 +4,7 @@ Pipeline Template Python
 
 ## Sobre
 
-Trata-se um projeto voltado a correção e validação de condigo server side
+Dummy para a criação de serviços
 
 ## Tecnologias Utilizadas
 
@@ -16,11 +16,22 @@ Trata-se um projeto voltado a correção e validação de condigo server side
 
 ```bash
 # .env
-ENVIRONMENT="DEV"
-CACHE_TYPE="redis"
-CACHE_URI="redis://default:redispass@cache/1"
-RELATIONAL_DB_URI="postgresql+psycopg2://postgres:postgress@db:5432/core?sslmode=require"
-NO_RELATIONAL_URI=""
+ENVIRONMENT='LOCAL'
+
+# --- postgres
+RELATIONAL_DB_URI='postgresql://admin:postgresspass@db/core'
+
+# --- redis
+CACHE_TYPE='redis'
+REDIS_URL='redis://default:redispass@cache:6379/0'
+
+# -- celery brooker
+BROKER_URI='redis://default:redispass@cache:6379/2'
+
+# --- mongo
+MONGO_HOST='mongodb://root:root@mongodb'
+MONGO_PORT=27017
+MONGO_DB_NAME='example-db'
 ```
 
 ## Instalação

@@ -18,10 +18,12 @@ def executor(data, provider: str, module: str = None, asyncer: bool = False):
             raise Exception(f"error execute step {str(ex)}")
 
         if asyncer:
-            show_log.info(
+            show_log(
                 "Executing step async -> {}:{}".format(provider, module))
-            threading.Thread(target=function, args=(data)).start()
-            return True
+            threading.Thread(target=function, args=(data, )).start()
+            response["data"] = {}
+            response["status"] = True
+            return response
 
         response["data"] = function(data)
         response["status"] = True
